@@ -13,7 +13,7 @@ class monkey:
         self.false_dest = 0
         self.divisor = 0
         self.inspect_func = None
-        self.worry_decay = True
+        self.worry_decay = False
 
     def find_destination(self, worry) -> int:
         if worry % self.divisor == 0:
@@ -25,16 +25,19 @@ class monkey:
         self.inspected_count += 1
         return self.inspect_func(worry)
 
-    def inspect_items(self):
+    def inspect_items(self, modulo):
         while len(self.items_held) > 0:
             itm = self.items_held.popleft()
             itm = self.inspect(itm)
             if self.worry_decay:
                 itm = itm//3
+            else:
+                itm = itm % modulo
             self.monkeys[self.find_destination(itm)].items_held.append(itm)
 
 monkeys = list()
 
+magic_monkey_num = 1 
 with open('day11/input.txt') as f:
     line_count = 0
     for line in [l.rstrip() for l in f]:
@@ -59,6 +62,7 @@ with open('day11/input.txt') as f:
                     new_monkey.inspect_func = partial(operator.add, int(worry_func_match[2]))
         elif line_type == 3:
             new_monkey.divisor = int(re.search(r'\d+', line)[0])
+            magic_monkey_num *= new_monkey.divisor
         elif line_type == 4:
             new_monkey.true_dest = int(re.search(r'\d+', line)[0]) 
         elif line_type == 5:
@@ -67,11 +71,13 @@ with open('day11/input.txt') as f:
 
         line_count += 1
 
-for _ in range(20):
+for _ in range(10000):
     for m in monkeys:
-        m.inspect_items()
+        m.inspect_items(magic_monkey_num)
 
 top_two = sorted([m.inspected_count for m in monkeys])[-2:]
 print(top_two[0] * top_two[1])
 
-# I did figure out the trick for part 2 and had to look something up
+# I didn't figure out the trick for part 2 and had to look something up. 
+# It's the AoC golden rule - if you don't need something to calculate the answer, you don't
+# need to keep it around
