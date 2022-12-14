@@ -1,6 +1,3 @@
-from turtle import done
-
-
 start_square = (0,0)
 end_square = (0,0)
 max_col, max_row = -1, -1
